@@ -86,3 +86,4 @@ WantedBy=multi-user.target
 
 systemctl enable firewall.service
 systemctl restart firewall.service
+ps ax | grep firewall.sh
