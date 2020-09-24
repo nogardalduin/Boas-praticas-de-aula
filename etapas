@@ -1,0 +1,88 @@
+/etc/network/interfaces
+
+todas as configuraçoes de rede
+
+find - que pesquisa no disco todo
+
+find[caminho]- opçao - arquivo
+vi /etc/network/interfaces
+
+o/ no linux e o raiz do disco
+1-primeiro definir se o ip é automatico (dhcp) ou estatico que vc tecnico vai informar
+
+address 172.31.1017
+
+netmask 255.255.0.0
+
+gateway 
+
+usa ip a ,para conferir
+
+qualquer alterção no arquivo de configuração:executar o restart no serviço,atraves do comando systemctl restart networking.service
+
+2- verificar o ip a;
+3- testar a conexão;ping basico pelo nome deu errado; executar pelo ip, de um site conhecido, 8.8.8.8 DNS Google
+ 
+4-verificar o /etc/resolv.conf; colocar em DNS conhecido;como Google ou outro DNS gratis
+
+5-atualizar o editor de texto VI
+
+6- Oque é preciso para instalação ou atualização de pacotes
+a. internet
+b.verificar o arquivo /etc/apt/sources.list
+c. DD no editor de texto deleta linha
+d.acrescentar da inserçao contrib; non-free
+e.ver se o pacote esta instalado dpkg -l [pacote]
+f.comando para mostrar o manual do comando do linux [man]
+g.instalar com o comando apt-install [pacote]
+h. desinstalar o pacote pelo Apt-remove (apt purge remove se o arquivo estiver dependencias
+i.ao final da desinstalação executar apt-remove
+7-os usarios do linux ficam no arquivo /etc/passwd
+a.mudar senha do usario atraves do comando passwd[usuario]
+b.P@ssw0rd
+8.para acessar remotamente é preciso que no linux seja instalado o serviço de terminal remoto
+openssh-server
+9.Putty para acessar remotamente;
+
+RELEMBRAR A INSTALAÇÃO DO DEBIAN NAS VMS;
+
+10.vi firewall.sh
+
+script basico para compartilhar internet
+
+#!/bin/bash
+echo 1 > /proc/sys/net/ipv4/ip_forward
+iptables -X
+iptables -F
+iptables -t nat -X
+iptables -t nat -F
+iptables -t nat -A POSTROUTING -o ens33 -j MASQUERADE
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A FORWARD -m state --state RELATED,ESTABLISHED -j ACCEPT
+	
+ls -la firewall.sh
+tornar executavel o arquivo
+chmod 755 firewall.sh
+r=4
+w=2
+x=1
+
+vim /lib/systemd/system/firewall.service
+
+modo de inserçao
+[unit]
+Description=firewall
+After=network.service
+
+[service]
+Type=simple
+RemainAfterExite=yes
+ExecStart=/root/firewall.sh start
+ExexStop=/root/firewall.sh stop
+ExecReload=/root/firewall.sh restart
+
+[Install]
+WantedBy=multi-user.target
+
+systemctl enable firewall.service
+systemctl restart firewall.service
